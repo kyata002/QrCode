@@ -1,0 +1,68 @@
+<resources>
+    <string name="app_name">QR Master</string>
+    
+    <!-- Main Screen -->
+    <string name="create_qr">Tạo QR Code</string>
+    <string name="scan_qr">Quét QR Code</string>
+    <string name="history">Lịch sử</string>
+    
+    <!-- Create QR -->
+    <string name="enter_text">Nhập văn bản hoặc URL</string>
+    <string name="qr_type">Loại QR Code</string>
+    <string name="text">Văn bản</string>
+    <string name="url">URL</string>
+    <string name="wifi">WiFi</string>
+    <string name="sms">SMS</string>
+    <string name="vcard">Danh thiếp (vCard)</string>
+    <string name="generate">Tạo QR Code</string>
+    <string name="customize">Tùy chỉnh</string>
+    
+    <!-- WiFi -->
+    <string name="wifi_ssid">Tên mạng (SSID)</string>
+    <string name="wifi_password">Mật khẩu</string>
+    <string name="wifi_security">Bảo mật</string>
+    <string name="wifi_security_none">Không</string>
+    <string name="wifi_security_wpa">WPA/WPA2</string>
+    
+    <!-- SMS -->
+    <string name="sms_number">Số điện thoại</string>
+    <string name="sms_message">Tin nhắn</string>
+    
+    <!-- vCard -->
+    <string name="vcard_name">Tên</string>
+    <string name="vcard_phone">Số điện thoại</string>
+    <string name="vcard_email">Email</string>
+    <string name="vcard_organization">Tổ chức</string>
+    <string name="vcard_address">Địa chỉ</string>
+    
+    <!-- Customize -->
+    <string name="foreground_color">Màu nền trước</string>
+    <string name="background_color">Màu nền sau</string>
+    <string name="error_correction">Mức sửa lỗi</string>
+    <string name="size">Kích thước</string>
+    <string name="margin">Lề</string>
+    <string name="add_logo">Thêm logo</string>
+    <string name="border_radius">Bo góc</string>
+    
+    <!-- Scan -->
+    <string name="scan_from_camera">Quét từ camera</string>
+    <string name="scan_from_image">Chọn ảnh</string>
+    <string name="scanning">Đang quét...</string>
+    <string name="scan_success">Quét thành công!</string>
+    <string name="scan_failed">Không thể quét QR code</string>
+    
+    <!-- History -->
+    <string name="scanned_qr">QR đã quét</string>
+    <string name="created_qr">QR đã tạo</string>
+    <string name="no_history">Chưa có lịch sử</string>
+    <string name="delete">Xóa</string>
+    <string name="share">Chia sẻ</string>
+    <string name="save">Lưu</string>
+    <string name="copy">Sao chép</string>
+    
+    <!-- Common -->
+    <string name="save_success">Lưu thành công</string>
+    <string name="share_qr">Chia sẻ QR Code</string>
+    <string name="permission_camera_required">Ứng dụng cần quyền camera để quét QR code</string>
+    <string name="permission_storage_required">Ứng dụng cần quyền truy cập bộ nhớ để lưu ảnh</string>
+</resources>

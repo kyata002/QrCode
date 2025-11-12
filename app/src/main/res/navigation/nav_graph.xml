@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navigation_create">
+
+    <fragment
+        android:id="@+id/navigation_create"
+        android:name="com.example.myapplication.ui.fragment.CreateQRFragment"
+        android:label="@string/create_qr"
+        tools:layout="@layout/fragment_create_qr" />
+
+    <fragment
+        android:id="@+id/navigation_scan"
+        android:name="com.example.myapplication.ui.fragment.ScanQRFragment"
+        android:label="@string/scan_qr"
+        tools:layout="@layout/fragment_scan_qr" />
+
+    <fragment
+        android:id="@+id/navigation_history"
+        android:name="com.example.myapplication.ui.fragment.HistoryFragment"
+        android:label="@string/history"
+        tools:layout="@layout/fragment_history" />
+
+</navigation>
+
