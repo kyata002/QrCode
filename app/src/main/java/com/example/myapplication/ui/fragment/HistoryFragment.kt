@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.R
 import com.example.myapplication.data.database.QRCodeDatabase
 import com.example.myapplication.data.model.QRCodeEntity
+import com.example.myapplication.data.model.QRCodeType
 import com.example.myapplication.data.repository.QRCodeRepository
 import com.example.myapplication.databinding.FragmentHistoryBinding
 import com.example.myapplication.ui.adapter.QRHistoryAdapter
@@ -147,12 +148,16 @@ class HistoryFragment : Fragment() {
     
     private fun getTypeString(type: com.example.myapplication.data.model.QRCodeType): String {
         return when (type) {
-            com.example.myapplication.data.model.QRCodeType.TEXT -> "Văn bản"
-            com.example.myapplication.data.model.QRCodeType.URL -> "URL"
-            com.example.myapplication.data.model.QRCodeType.WIFI -> "WiFi"
-            com.example.myapplication.data.model.QRCodeType.SMS -> "SMS"
-            com.example.myapplication.data.model.QRCodeType.VCARD -> "Danh thiếp"
-            com.example.myapplication.data.model.QRCodeType.UNKNOWN -> "Không xác định"
+            QRCodeType.TEXT -> "Văn bản"
+            QRCodeType.URL -> "URL"
+            QRCodeType.WIFI -> "WiFi"
+            QRCodeType.SMS -> "SMS"
+            QRCodeType.VCARD -> "Danh thiếp"
+            QRCodeType.UNKNOWN -> "Không xác định"
+            QRCodeType.EMAIL -> "Email"
+            QRCodeType.PHONE -> "Điện thoại"
+            QRCodeType.GEO -> "Địa điểm"
+            QRCodeType.EVENT -> "Sự kiện"
         }
     }
     

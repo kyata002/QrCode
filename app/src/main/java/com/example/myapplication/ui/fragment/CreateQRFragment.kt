@@ -25,7 +25,17 @@ class CreateQRFragment : Fragment() {
     private val binding get() = _binding!!
     
     private lateinit var viewModel: CreateQRViewModel
-    private val qrTypes = arrayOf("Văn bản", "URL", "WiFi", "SMS", "Danh thiếp (vCard)")
+    private val qrTypes = arrayOf(
+        "Văn bản",
+        "URL",
+        "WiFi",
+        "SMS",
+        "Danh thiếp (vCard)",
+        "Email",
+        "Điện thoại",
+        "Địa điểm",
+        "Sự kiện"
+    )
     
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,6 +66,15 @@ class CreateQRFragment : Fragment() {
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, qrTypes)
         binding.spinnerQrType.setAdapter(adapter)
         binding.spinnerQrType.setText(qrTypes[0], false)
+        binding.spinnerQrType.threshold = 0
+        binding.spinnerQrType.setOnClickListener {
+            binding.spinnerQrType.showDropDown()
+        }
+        binding.spinnerQrType.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                binding.spinnerQrType.showDropDown()
+            }
+        }
         binding.spinnerQrType.setOnItemClickListener { _, _, position, _ ->
             val type = when (position) {
                 0 -> QRCodeType.TEXT
@@ -63,8 +82,46 @@ class CreateQRFragment : Fragment() {
                 2 -> QRCodeType.WIFI
                 3 -> QRCodeType.SMS
                 4 -> QRCodeType.VCARD
+                5 -> QRCodeType.EMAIL
+                6 -> QRCodeType.PHONE
+                7 -> QRCodeType.GEO
+                8 -> QRCodeType.EVENT
                 else -> QRCodeType.TEXT
             }
+            viewModel.setQRType(type)
+            updateUIForType(type)
+
+            // Đồng bộ lựa chọn với ChipGroup
+            when (position) {
+                0 -> binding.chipGroupQrType.check(R.id.chip_text)
+                1 -> binding.chipGroupQrType.check(R.id.chip_url)
+                2 -> binding.chipGroupQrType.check(R.id.chip_wifi)
+                3 -> binding.chipGroupQrType.check(R.id.chip_sms)
+                4 -> binding.chipGroupQrType.check(R.id.chip_vcard)
+                5 -> binding.chipGroupQrType.check(R.id.chip_email)
+                6 -> binding.chipGroupQrType.check(R.id.chip_phone)
+                7 -> binding.chipGroupQrType.check(R.id.chip_geo)
+                8 -> binding.chipGroupQrType.check(R.id.chip_event)
+            }
+        }
+
+        // QR Type ChipGroup
+        binding.chipGroupQrType.check(R.id.chip_text)
+        binding.chipGroupQrType.setOnCheckedStateChangeListener { _, checkedIds ->
+            val checkedId = checkedIds.firstOrNull() ?: return@setOnCheckedStateChangeListener
+            val (position, type) = when (checkedId) {
+                R.id.chip_text -> 0 to QRCodeType.TEXT
+                R.id.chip_url -> 1 to QRCodeType.URL
+                R.id.chip_wifi -> 2 to QRCodeType.WIFI
+                R.id.chip_sms -> 3 to QRCodeType.SMS
+                R.id.chip_vcard -> 4 to QRCodeType.VCARD
+                R.id.chip_email -> 5 to QRCodeType.EMAIL
+                R.id.chip_phone -> 6 to QRCodeType.PHONE
+                R.id.chip_geo -> 7 to QRCodeType.GEO
+                R.id.chip_event -> 8 to QRCodeType.EVENT
+                else -> 0 to QRCodeType.TEXT
+            }
+            binding.spinnerQrType.setText(qrTypes[position], false)
             viewModel.setQRType(type)
             updateUIForType(type)
         }
@@ -103,7 +160,12 @@ class CreateQRFragment : Fragment() {
     
     private fun updateUIForType(type: QRCodeType) {
         binding.layoutTextInput.visibility = when (type) {
-            QRCodeType.TEXT, QRCodeType.URL -> View.VISIBLE
+            QRCodeType.TEXT,
+            QRCodeType.URL,
+            QRCodeType.EMAIL,
+            QRCodeType.PHONE,
+            QRCodeType.GEO,
+            QRCodeType.EVENT -> View.VISIBLE
             else -> View.GONE
         }
         binding.layoutWifi.visibility = if (type == QRCodeType.WIFI) View.VISIBLE else View.GONE
@@ -113,8 +175,12 @@ class CreateQRFragment : Fragment() {
         // Update hint
         binding.layoutTextInput.hint = when (type) {
             QRCodeType.TEXT -> "Nhập văn bản"
-            QRCodeType.URL -> "Nhập URL"
-            else -> "Nhập văn bản hoặc URL"
+            QRCodeType.URL -> "Nhập URL (https://...)"
+            QRCodeType.EMAIL -> "Nhập email hoặc dạng mailto:example@mail.com"
+            QRCodeType.PHONE -> "Nhập số điện thoại hoặc dạng tel:0123456789"
+            QRCodeType.GEO -> "Nhập vị trí, ví dụ geo:10.123,106.123"
+            QRCodeType.EVENT -> "Nhập nội dung sự kiện (BEGIN:VEVENT...)"
+            else -> "Nhập nội dung"
         }
     }
     
@@ -173,6 +239,17 @@ class CreateQRFragment : Fragment() {
                     )
                 } else {
                     Toast.makeText(requireContext(), "Vui lòng nhập tên", Toast.LENGTH_SHORT).show()
+                }
+            }
+            QRCodeType.EMAIL,
+            QRCodeType.PHONE,
+            QRCodeType.GEO,
+            QRCodeType.EVENT -> {
+                val text = binding.etTextInput.text?.toString() ?: ""
+                if (text.isNotEmpty()) {
+                    viewModel.generateQRCode(text = text)
+                } else {
+                    Toast.makeText(requireContext(), "Vui lòng nhập nội dung", Toast.LENGTH_SHORT).show()
                 }
             }
             else -> {}

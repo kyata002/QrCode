@@ -29,10 +29,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.myapplication.R
 import com.example.myapplication.data.database.QRCodeDatabase
+import com.example.myapplication.data.model.QRCodeType
 import com.example.myapplication.data.repository.QRCodeRepository
 import com.example.myapplication.databinding.FragmentScanQrBinding
+import com.example.myapplication.databinding.DialogScanResultBinding
 import com.example.myapplication.ui.viewmodel.ScanQRViewModel
 import com.example.myapplication.ui.viewmodel.ViewModelFactory
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -121,14 +124,6 @@ class ScanQRFragment : Fragment() {
             captureImageFromCamera()
         }
         
-        binding.btnCopy.setOnClickListener {
-            copyToClipboard()
-        }
-        
-        binding.btnSaveScan.setOnClickListener {
-            viewModel.saveScannedQR()
-        }
-        
         // Also allow clicking on preview to scan
         binding.cameraPreview.setOnClickListener {
             captureImageFromCamera()
@@ -187,8 +182,7 @@ class ScanQRFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.scannedContent.observe(viewLifecycleOwner) { content ->
             if (content != null) {
-                binding.cardResult.visibility = View.VISIBLE
-                setupContentText(content)
+                showScanResultDialog(content)
             }
         }
         
@@ -255,7 +249,44 @@ class ScanQRFragment : Fragment() {
         viewModel.scanQRCodeFromBitmap(bitmap)
     }
     
-    private fun setupContentText(content: String) {
+    private fun showScanResultDialog(content: String) {
+        val dialogBinding = DialogScanResultBinding.inflate(LayoutInflater.from(requireContext()))
+        
+        // Setup QR type text
+        val type = viewModel.scannedType.value
+        dialogBinding.tvDialogQrType.text = type?.let { getTypeString(it) } ?: "Không xác định"
+
+        // Setup content text
+        setupDialogContentText(dialogBinding, content)
+
+        // Create dialog
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(dialogBinding.root)
+            .create()
+
+        // Đảm bảo khi dialog đóng thì kết quả scan được reset,
+        // tránh việc fragment mở lại sẽ tự hiển thị dialog cũ
+        dialog.setOnDismissListener {
+            viewModel.resetScanResult()
+        }
+
+        // Setup button listeners
+        dialogBinding.btnDialogCopy.setOnClickListener {
+            copyToClipboard(content)
+        }
+        
+        dialogBinding.btnDialogSave.setOnClickListener {
+            viewModel.saveScannedQR()
+        }
+        
+        dialogBinding.btnDialogClose.setOnClickListener {
+            dialog.dismiss()
+        }
+        
+        dialog.show()
+    }
+    
+    private fun setupDialogContentText(dialogBinding: DialogScanResultBinding, content: String) {
         val type = viewModel.scannedType.value
         if (type == com.example.myapplication.data.model.QRCodeType.URL || 
             content.startsWith("http://") || 
@@ -279,11 +310,26 @@ class ScanQRFragment : Fragment() {
                 content.length,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
-            binding.tvScannedContent.text = spannable
-            binding.tvScannedContent.movementMethod = android.text.method.LinkMovementMethod.getInstance()
+            dialogBinding.tvDialogScannedContent.text = spannable
+            dialogBinding.tvDialogScannedContent.movementMethod = android.text.method.LinkMovementMethod.getInstance()
         } else {
-            binding.tvScannedContent.text = content
-            binding.tvScannedContent.movementMethod = null
+            dialogBinding.tvDialogScannedContent.text = content
+            dialogBinding.tvDialogScannedContent.movementMethod = null
+        }
+    }
+
+    private fun getTypeString(type: QRCodeType): String {
+        return when (type) {
+            QRCodeType.TEXT -> "Văn bản"
+            QRCodeType.URL -> "URL"
+            QRCodeType.WIFI -> "WiFi"
+            QRCodeType.SMS -> "SMS"
+            QRCodeType.VCARD -> "Danh thiếp"
+            QRCodeType.EMAIL -> "Email"
+            QRCodeType.PHONE -> "Điện thoại"
+            QRCodeType.GEO -> "Địa điểm"
+            QRCodeType.EVENT -> "Sự kiện"
+            QRCodeType.UNKNOWN -> "Không xác định"
         }
     }
     
@@ -296,14 +342,11 @@ class ScanQRFragment : Fragment() {
         }
     }
     
-    private fun copyToClipboard() {
-        val content = viewModel.scannedContent.value
-        if (content != null) {
-            val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("QR Code", content)
-            clipboard.setPrimaryClip(clip)
-            Toast.makeText(requireContext(), "Đã sao chép", Toast.LENGTH_SHORT).show()
-        }
+    private fun copyToClipboard(content: String) {
+        val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("QR Code", content)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(requireContext(), "Đã sao chép", Toast.LENGTH_SHORT).show()
     }
     
     override fun onDestroyView() {

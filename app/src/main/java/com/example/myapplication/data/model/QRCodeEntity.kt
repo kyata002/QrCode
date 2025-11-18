@@ -2,7 +2,6 @@ package com.example.myapplication.data.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.Date
 
 @Entity(tableName = "qr_codes")
 data class QRCodeEntity(
@@ -21,6 +20,10 @@ enum class QRCodeType {
     WIFI,
     SMS,
     VCARD,
+    EMAIL,
+    PHONE,
+    GEO,
+    EVENT,
     UNKNOWN
 }
 

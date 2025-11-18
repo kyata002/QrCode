@@ -12,23 +12,117 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- QR Type Selection -->
+        <!-- QR Type Section -->
+        <TextView
+            android:id="@+id/tv_qr_type_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/qr_type"
+            android:textAppearance="?attr/textAppearanceHeadline6" />
+
+        <TextView
+            android:id="@+id/tv_qr_type_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Chọn nhanh loại QR phổ biến hoặc mở danh sách đầy đủ."
+            android:textAppearance="?attr/textAppearanceBody2" />
+
+        <!-- Quick type selection -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_qr_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:singleSelection="true"
+            app:selectionRequired="true"
+            app:chipSpacingHorizontal="4dp"
+            app:chipSpacingVertical="4dp">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_text"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Văn bản" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_url"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="URL" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_wifi"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WiFi" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_sms"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SMS" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_vcard"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Danh thiếp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_email"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_phone"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Điện thoại" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_geo"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Địa điểm" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_event"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sự kiện" />
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Full QR Type list (dropdown) -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:hint="@string/qr_type"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            app:endIconMode="dropdown_menu">
 
             <AutoCompleteTextView
                 android:id="@+id/spinner_qr_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="none"
                 android:focusable="false"
-                android:clickable="true"
-                android:inputType="none" />
+                android:clickable="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Text/URL Input -->
+        <!-- Text/URL/Email/Phone/Geo/Event Input -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layout_text_input"
             android:layout_width="match_parent"
@@ -44,6 +138,16 @@
                 android:inputType="textMultiLine"
                 android:minLines="3" />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Helper for generic text input -->
+        <TextView
+            android:id="@+id/tv_text_input_helper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Hỗ trợ: Văn bản, URL, Email, Điện thoại, Địa điểm, Sự kiện.\nVí dụ: https://..., example@mail.com, 0123456789, 10.123,106.123"
+            android:textSize="12sp"
+            android:textColor="?attr/colorOnBackground" />
 
         <!-- WiFi Fields -->
         <LinearLayout

@@ -47,10 +47,34 @@ object QRCodeContentBuilder {
     
     fun detectQRCodeType(content: String): QRCodeType {
         return when {
-            content.startsWith("http://") || content.startsWith("https://") -> QRCodeType.URL
-            content.startsWith("WIFI:") -> QRCodeType.WIFI
-            content.startsWith("SMSTO:") -> QRCodeType.SMS
-            content.startsWith("BEGIN:VCARD") -> QRCodeType.VCARD
+            // URL
+            content.startsWith("http://", ignoreCase = true) ||
+            content.startsWith("https://", ignoreCase = true) -> QRCodeType.URL
+
+            // WiFi
+            content.startsWith("WIFI:", ignoreCase = true) -> QRCodeType.WIFI
+
+            // SMS
+            content.startsWith("SMSTO:", ignoreCase = true) -> QRCodeType.SMS
+
+            // vCard (danh bạ)
+            content.startsWith("BEGIN:VCARD", ignoreCase = true) -> QRCodeType.VCARD
+
+            // Email (nhiều chuẩn khác nhau)
+            content.startsWith("mailto:", ignoreCase = true) ||
+            content.startsWith("MATMSG:", ignoreCase = true) -> QRCodeType.EMAIL
+
+            // Gọi điện
+            content.startsWith("tel:", ignoreCase = true) ||
+            content.startsWith("TEL:", ignoreCase = true) -> QRCodeType.PHONE
+
+            // Vị trí (map)
+            content.startsWith("geo:", ignoreCase = true) -> QRCodeType.GEO
+
+            // Sự kiện (calendar)
+            content.startsWith("BEGIN:VEVENT", ignoreCase = true) -> QRCodeType.EVENT
+
+            // Mặc định coi là text thuần
             else -> QRCodeType.TEXT
         }
     }

@@ -79,6 +79,45 @@ class CreateQRViewModel(private val repository: QRCodeRepository) : ViewModel() 
                     )
                 } else ""
             }
+            QRCodeType.EMAIL -> {
+                val raw = text ?: ""
+                if (raw.isNotEmpty()) {
+                    if (raw.startsWith("mailto:", ignoreCase = true) ||
+                        raw.startsWith("MATMSG:", ignoreCase = true)
+                    ) {
+                        raw
+                    } else {
+                        "mailto:$raw"
+                    }
+                } else ""
+            }
+            QRCodeType.PHONE -> {
+                val raw = text ?: ""
+                if (raw.isNotEmpty()) {
+                    if (raw.startsWith("tel:", ignoreCase = true)) {
+                        raw
+                    } else {
+                        "tel:$raw"
+                    }
+                } else ""
+            }
+            QRCodeType.GEO -> {
+                val raw = text ?: ""
+                if (raw.isNotEmpty()) {
+                    if (raw.startsWith("geo:", ignoreCase = true)) {
+                        raw
+                    } else {
+                        "geo:$raw"
+                    }
+                } else ""
+            }
+            QRCodeType.EVENT -> {
+                val raw = text ?: ""
+                if (raw.isNotEmpty()) {
+                    // Đơn giản: dùng nội dung làm SUMMARY trong VEVENT
+                    "BEGIN:VEVENT\nSUMMARY:$raw\nEND:VEVENT"
+                } else ""
+            }
             else -> ""
         }
         

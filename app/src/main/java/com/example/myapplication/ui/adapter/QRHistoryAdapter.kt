@@ -116,6 +116,10 @@ class QRHistoryAdapter(
                 QRCodeType.SMS -> "SMS"
                 QRCodeType.VCARD -> "Danh thiếp"
                 QRCodeType.UNKNOWN -> "Không xác định"
+                QRCodeType.EMAIL -> "Email"
+                QRCodeType.PHONE -> "Điện thoại"
+                QRCodeType.GEO -> "Địa điểm"
+                QRCodeType.EVENT -> "Sự kiện"
             }
         }
     }
