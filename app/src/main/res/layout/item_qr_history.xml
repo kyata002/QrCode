@@ -61,6 +61,16 @@
                 tools:text="01/01/2024 12:00" />
         </LinearLayout>
 
+        <!-- Favorite Icon -->
+        <ImageButton
+            android:id="@+id/btn_favorite"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/star_big_off"
+            android:contentDescription="Favorite" />
+
         <ImageButton
             android:id="@+id/btn_delete"
             android:layout_width="wrap_content"
@@ -71,4 +81,3 @@
             app:tint="?attr/colorError" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
-

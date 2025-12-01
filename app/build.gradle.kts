@@ -65,15 +65,26 @@ dependencies {
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.view)
     
-    // ZXing for QR Code
-    implementation(libs.zxing.core)
-    implementation(libs.zxing.android.embedded)
+    // ML Kit Barcode Scanning for QR Code
+    implementation("com.google.mlkit:barcode-scanning:17.2.0")
     
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
     
+    // Google Play Services Tasks Kotlin Extensions (for coroutines support with ML Kit)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+    
     // Glide
     implementation(libs.glide)
+    
+    // MPAndroidChart for Analytics
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    
+    // ColorPicker for Advanced Customization
+    implementation("com.github.skydoves:colorpickerview:2.3.0")
+    
+    // AndroidSVG for SVG export
+    implementation("com.caverock:androidsvg-aar:1.4")
     
     // RecyclerView & CardView
     implementation(libs.androidx.recyclerview)

@@ -11,7 +11,9 @@ data class QRCodeEntity(
     val type: QRCodeType,
     val isScanned: Boolean, // true nếu là QR đã quét, false nếu là QR đã tạo
     val createdAt: Long = System.currentTimeMillis(),
-    val qrImagePath: String? = null // Đường dẫn đến ảnh QR code đã lưu
+    val qrImagePath: String? = null, // Đường dẫn đến ảnh QR code đã lưu
+    val isFavorite: Boolean = false, // Đánh dấu yêu thích
+    val tags: String? = null // Tags, phân cách bằng dấu phẩy
 )
 
 enum class QRCodeType {

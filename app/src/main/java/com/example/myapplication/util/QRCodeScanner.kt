@@ -1,77 +1,73 @@
 package com.example.myapplication.util
 
 import android.graphics.Bitmap
-import com.google.zxing.BinaryBitmap
-import com.google.zxing.MultiFormatReader
-import com.google.zxing.RGBLuminanceSource
-import com.google.zxing.common.HybridBinarizer
-import com.google.zxing.NotFoundException
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.common.Barcode
+import com.google.mlkit.vision.common.InputImage
+import kotlinx.coroutines.tasks.await
 
 object QRCodeScanner {
     
+    /**
+     * Scan QR code from bitmap using ML Kit Barcode Scanning API
+     * @param bitmap The bitmap to scan for QR codes
+     * @return The decoded QR code content, or null if no QR code found
+     */
     fun scanQRCodeFromBitmap(bitmap: Bitmap): String? {
-        if (bitmap == null || bitmap.isRecycled) {
-            return null
-        }
-        
-        // Try scanning with original size first
-        var result = tryScan(bitmap)
-        if (result != null) return result
-        
-        // If failed, try with resized versions
-        val sizes = listOf(800, 1200, 1600)
-        for (size in sizes) {
-            val resized = resizeBitmap(bitmap, size)
-            result = tryScan(resized)
-            if (result != null) {
-                if (resized != bitmap && !resized.isRecycled) {
-                    resized.recycle()
-                }
-                return result
-            }
-            if (resized != bitmap && !resized.isRecycled) {
-                resized.recycle()
-            }
-        }
-        
-        return null
-    }
-    
-    private fun tryScan(bitmap: Bitmap): String? {
         return try {
-            val width = bitmap.width
-            val height = bitmap.height
-            val pixels = IntArray(width * height)
-            bitmap.getPixels(pixels, 0, width, 0, 0, width, height)
+            // Configure barcode scanner to only detect QR codes
+            val options = BarcodeScannerOptions.Builder()
+                .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
+                .build()
             
-            val source = RGBLuminanceSource(width, height, pixels)
-            val binaryBitmap = BinaryBitmap(HybridBinarizer(source))
+            val scanner = BarcodeScanning.getClient(options)
+            val image = InputImage.fromBitmap(bitmap, 0)
             
-            val reader = MultiFormatReader()
-            val result = reader.decode(binaryBitmap)
-            result.text
-        } catch (e: NotFoundException) {
-            // QR code not found in this image
-            null
+            // Synchronous scanning - blocks until complete
+            val task = scanner.process(image)
+            
+            // Wait for result (this is blocking, but it's fast)
+            var result: String? = null
+            task.addOnSuccessListener { barcodes ->
+                // Get the first QR code found
+                result = barcodes.firstOrNull()?.rawValue
+            }.addOnFailureListener {
+                // Scanning failed
+                result = null
+            }
+            
+            // Wait for task to complete (simple blocking approach)
+            while (!task.isComplete) {
+                Thread.sleep(10)
+            }
+            
+            result
         } catch (e: Exception) {
             e.printStackTrace()
             null
         }
     }
     
-    private fun resizeBitmap(bitmap: Bitmap, maxSize: Int): Bitmap {
-        val width = bitmap.width
-        val height = bitmap.height
-        
-        if (width <= maxSize && height <= maxSize) {
-            return bitmap
+    /**
+     * Scan QR code from bitmap asynchronously using coroutines
+     * @param bitmap The bitmap to scan for QR codes
+     * @return The decoded QR code content, or null if no QR code found
+     */
+    suspend fun scanQRCodeFromBitmapAsync(bitmap: Bitmap): String? {
+        return try {
+            val options = BarcodeScannerOptions.Builder()
+                .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
+                .build()
+            
+            val scanner = BarcodeScanning.getClient(options)
+            val image = InputImage.fromBitmap(bitmap, 0)
+            
+            val barcodes = scanner.process(image).await()
+            barcodes.firstOrNull()?.rawValue
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
-        
-        val scale = minOf(maxSize.toFloat() / width, maxSize.toFloat() / height)
-        val newWidth = (width * scale).toInt()
-        val newHeight = (height * scale).toInt()
-        
-        return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
     }
 }
-

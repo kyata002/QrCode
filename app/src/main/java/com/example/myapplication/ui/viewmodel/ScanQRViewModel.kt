@@ -24,17 +24,33 @@ class ScanQRViewModel(private val repository: QRCodeRepository) : ViewModel() {
     
     private val _saveSuccess = MutableLiveData<Boolean>()
     val saveSuccess: LiveData<Boolean> = _saveSuccess
+
+    private val _isBatchMode = MutableLiveData<Boolean>(false)
+    val isBatchMode: LiveData<Boolean> = _isBatchMode
+
+    fun setBatchMode(enabled: Boolean) {
+        _isBatchMode.value = enabled
+    }
+
     
     fun scanQRCodeFromBitmap(bitmap: Bitmap) {
-        val content = QRCodeScanner.scanQRCodeFromBitmap(bitmap)
-        if (content != null) {
-            _scannedContent.value = content
-            _scannedType.value = QRCodeContentBuilder.detectQRCodeType(content)
-            _scanError.value = null
-        } else {
-            _scannedContent.value = null
-            _scannedType.value = QRCodeType.UNKNOWN
-            _scanError.value = "Không thể quét QR code"
+        viewModelScope.launch {
+            try {
+                val content = QRCodeScanner.scanQRCodeFromBitmapAsync(bitmap)
+                if (content != null) {
+                    _scannedContent.value = content
+                    _scannedType.value = QRCodeContentBuilder.detectQRCodeType(content)
+                    _scanError.value = null
+                } else {
+                    _scannedContent.value = null
+                    _scannedType.value = QRCodeType.UNKNOWN
+                    _scanError.value = "Không thể quét QR code"
+                }
+            } catch (e: Exception) {
+                _scannedContent.value = null
+                _scannedType.value = QRCodeType.UNKNOWN
+                _scanError.value = "Lỗi: ${e.message}"
+            }
         }
     }
     

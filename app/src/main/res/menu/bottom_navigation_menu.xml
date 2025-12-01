@@ -14,5 +14,10 @@
         android:id="@+id/navigation_history"
         android:icon="@android:drawable/ic_menu_recent_history"
         android:title="@string/history" />
-</menu>
 
+    <item
+        android:id="@+id/navigation_analytics"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="Analytics" />
+
+</menu>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Export QR Code"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select export format:"
+        android:layout_marginBottom="12dp" />
+
+    <RadioGroup
+        android:id="@+id/radio_group_format"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
+
+        <RadioButton
+            android:id="@+id/radio_png"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PNG (High Quality)"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/radio_jpeg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="JPEG (Compressed)" />
+
+        <RadioButton
+            android:id="@+id/radio_svg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SVG (Vector)" />
+
+        <RadioButton
+            android:id="@+id/radio_pdf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PDF (Document)" />
+    </RadioGroup>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="File name">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_filename"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="qr_code" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>

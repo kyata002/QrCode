@@ -50,6 +50,10 @@
     <string name="scanning">Đang quét...</string>
     <string name="scan_success">Quét thành công!</string>
     <string name="scan_failed">Không thể quét QR code</string>
+    <string name="batch_scan_mode">Quét hàng loạt</string>
+    <string name="batch_scan_on">Đã bật chế độ quét hàng loạt</string>
+    <string name="batch_scan_off">Đã tắt chế độ quét hàng loạt</string>
+
     
     <!-- History -->
     <string name="scanned_qr">QR đã quét</string>

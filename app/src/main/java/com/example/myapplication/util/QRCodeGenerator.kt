@@ -10,10 +10,6 @@ import android.graphics.Rect
 import android.graphics.RectF
 import com.example.myapplication.data.model.ErrorCorrectionLevel
 import com.example.myapplication.data.model.QRCodeCustomization
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.EncodeHintType
-import com.google.zxing.qrcode.QRCodeWriter
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel as ZXingErrorCorrectionLevel
 
 object QRCodeGenerator {
     
@@ -22,25 +18,45 @@ object QRCodeGenerator {
         customization: QRCodeCustomization = QRCodeCustomization()
     ): Bitmap? {
         return try {
-            val hints = hashMapOf<EncodeHintType, Any>().apply {
-                put(EncodeHintType.ERROR_CORRECTION, customization.errorCorrectionLevel.toZXingLevel())
-                put(EncodeHintType.MARGIN, customization.margin)
-                put(EncodeHintType.CHARACTER_SET, "UTF-8")
-            }
+            // Use custom encoder
+            val matrix = QRCodeEncoder.encode(
+                content,
+                customization.errorCorrectionLevel,
+                customization.margin
+            ) ?: return null
             
-            val writer = QRCodeWriter()
-            val bitMatrix = writer.encode(content, BarcodeFormat.QR_CODE, customization.size, customization.size, hints)
+            val width = matrix.size
+            val height = matrix.size
             
-            val width = bitMatrix.width
-            val height = bitMatrix.height
-            val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+            // Calculate scale factor to achieve desired size
+            val scale = customization.size / width.toFloat()
+            val scaledSize = (width * scale).toInt()
             
+            // Create bitmap with scaled size
+            val bitmap = Bitmap.createBitmap(scaledSize, scaledSize, Bitmap.Config.RGB_565)
+            
+            // Draw QR code with scaling
             for (x in 0 until width) {
                 for (y in 0 until height) {
-                    bitmap.setPixel(
-                        x, y,
-                        if (bitMatrix[x, y]) customization.foregroundColor else customization.backgroundColor
-                    )
+                    val color = if (matrix.modules[y][x]) {
+                        customization.foregroundColor
+                    } else {
+                        customization.backgroundColor
+                    }
+                    
+                    // Fill scaled pixels
+                    val startX = (x * scale).toInt()
+                    val startY = (y * scale).toInt()
+                    val endX = ((x + 1) * scale).toInt()
+                    val endY = ((y + 1) * scale).toInt()
+                    
+                    for (px in startX until endX) {
+                        for (py in startY until endY) {
+                            if (px < scaledSize && py < scaledSize) {
+                                bitmap.setPixel(px, py, color)
+                            }
+                        }
+                    }
                 }
             }
             
@@ -102,15 +118,6 @@ object QRCodeGenerator {
         canvas.drawBitmap(bitmap, rect, rect, paint)
         
         return output
-    }
-    
-    private fun ErrorCorrectionLevel.toZXingLevel(): ZXingErrorCorrectionLevel {
-        return when (this) {
-            ErrorCorrectionLevel.LOW -> ZXingErrorCorrectionLevel.L
-            ErrorCorrectionLevel.MEDIUM -> ZXingErrorCorrectionLevel.M
-            ErrorCorrectionLevel.QUARTILE -> ZXingErrorCorrectionLevel.Q
-            ErrorCorrectionLevel.HIGH -> ZXingErrorCorrectionLevel.H
-        }
     }
 }
 
